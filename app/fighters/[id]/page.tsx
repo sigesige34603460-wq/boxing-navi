@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FighterImage from "@/components/FighterImage";
 import fighters from "../data";
 
 type Props = { params: Promise<{ id: string }> };
@@ -43,27 +44,38 @@ export default async function FighterPage({ params }: Props) {
       <Header />
       <main className="flex-1">
         {/* ヒーローバナー */}
-        <div className={`bg-gradient-to-br ${c.header} text-white py-12 px-4`}>
-          <div className="max-w-4xl mx-auto">
+        <div className={`bg-gradient-to-br ${c.header} text-white`}>
+          <div className="max-w-4xl mx-auto px-4 pt-6 pb-0">
             <Link href="/fighters" className="text-white/70 text-sm hover:text-white mb-4 inline-block">
               ← 選手一覧に戻る
             </Link>
-            <div className="flex items-start gap-6">
-              <div className="text-6xl">{f.flag}</div>
-              <div>
-                <span className="inline-block bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full mb-2">
-                  {f.rankLabel}
-                </span>
-                <h1 className="text-3xl md:text-4xl font-black">{f.name}</h1>
-                <p className="text-white/80 text-lg">{f.nameEn}</p>
-                <p className="text-white/70 text-sm mt-1">「{f.nickname}」</p>
-                <div className="mt-4 flex flex-wrap gap-3">
-                  {f.titles.map((t) => (
-                    <span key={t} className="bg-white/20 text-white text-xs px-2 py-1 rounded">
-                      {t}
-                    </span>
-                  ))}
-                </div>
+          </div>
+          <div className="max-w-4xl mx-auto px-4 pb-10 flex flex-col md:flex-row items-end gap-6">
+            {/* 選手写真 */}
+            <div className="relative w-48 h-64 md:w-56 md:h-72 rounded-2xl overflow-hidden shadow-2xl shrink-0 border-2 border-white/20">
+              <FighterImage
+                src={f.image}
+                name={f.name}
+                flag={f.flag}
+                color={f.color}
+                size="lg"
+              />
+            </div>
+            {/* テキスト情報 */}
+            <div className="pb-2">
+              <span className="inline-block bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
+                {f.rankLabel}
+              </span>
+              <h1 className="text-3xl md:text-4xl font-black">{f.name}</h1>
+              <p className="text-white/80 text-lg mt-1">{f.nameEn}</p>
+              <p className="text-white/70 text-sm mt-1">「{f.nickname}」</p>
+              <p className="text-white/80 text-sm mt-2 font-bold">{f.record}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {f.titles.map((t) => (
+                  <span key={t} className="bg-white/20 text-white text-xs px-2 py-1 rounded">
+                    {t}
+                  </span>
+                ))}
               </div>
             </div>
           </div>

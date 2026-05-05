@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FighterImage from "@/components/FighterImage";
 import fighters, { featuredFighters } from "./fighters/data";
 
 export default function Home() {
@@ -58,19 +59,32 @@ export default function Home() {
                   <Link
                     key={f.id}
                     href={`/fighters/${f.id}`}
-                    className="block border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow"
+                    className="block border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${colorBadge}`}>
+                    {/* サムネ画像 */}
+                    <div className="relative w-full h-44">
+                      <FighterImage
+                        src={f.image}
+                        name={f.name}
+                        flag={f.flag}
+                        color={f.color}
+                        size="sm"
+                      />
+                      <div className="absolute top-2 right-2 bg-black/40 backdrop-blur-sm rounded-full px-2 py-0.5 text-sm">
+                        {f.flag}
+                      </div>
+                    </div>
+                    {/* テキスト */}
+                    <div className="p-5">
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-2 ${colorBadge}`}>
                         {f.rankLabel}
                       </span>
-                      <span className="text-xl">{f.flag}</span>
+                      <h3 className="text-xl font-black text-gray-900">{f.name}</h3>
+                      <p className="text-sm text-gray-500 mb-1">{f.nameEn}</p>
+                      <p className="text-xs font-medium text-gray-600 mb-3">「{f.nickname}」</p>
+                      <p className="text-sm text-gray-700 mb-3">{f.tagline}</p>
+                      <p className="text-red-600 text-xs font-bold">詳細プロフィールを見る →</p>
                     </div>
-                    <h3 className="text-xl font-black text-gray-900">{f.name}</h3>
-                    <p className="text-sm text-gray-500 mb-1">{f.nameEn}</p>
-                    <p className="text-xs font-medium text-gray-600 mb-3">「{f.nickname}」</p>
-                    <p className="text-sm text-gray-700 mb-4">{f.tagline}</p>
-                    <p className="text-red-600 text-xs font-bold">詳細プロフィールを見る →</p>
                   </Link>
                 );
               })}

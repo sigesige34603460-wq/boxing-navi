@@ -5,6 +5,7 @@ export type Fighter = {
   flag: string;
   nationality: string;
   nickname: string;
+  image: string | null;  // Wikimedia Commons URL or null for styled avatar
   born: string;
   birthplace: string;
   height: string;
@@ -42,6 +43,7 @@ const fighters: Fighter[] = [
     flag: "🇯🇵",
     nationality: "日本",
     nickname: "モンスター",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Naoya_Inoue_%2821990059374%29_%28cropped%29.jpg/480px-Naoya_Inoue_%2821990059374%29_%28cropped%29.jpg",
     born: "1993年4月10日",
     birthplace: "神奈川県座間市",
     height: "165cm",
@@ -95,6 +97,7 @@ const fighters: Fighter[] = [
     flag: "🇯🇵",
     nationality: "日本",
     nickname: "天才・神童",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Tenshin_Nasukawa_2019.jpg/480px-Tenshin_Nasukawa_2019.jpg",
     born: "2000年8月18日",
     birthplace: "千葉県松戸市",
     height: "163cm",
@@ -142,6 +145,7 @@ const fighters: Fighter[] = [
     flag: "🇲🇽",
     nationality: "メキシコ",
     nickname: "カネロ（Cinnamon＝シナモン、赤毛から）",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Canelo_Alvarez_%2849012977928%29.jpg/480px-Canelo_Alvarez_%2849012977928%29.jpg",
     born: "1990年7月18日",
     birthplace: "グアダラハラ、ハリスコ州、メキシコ",
     height: "173cm",
@@ -193,6 +197,7 @@ const fighters: Fighter[] = [
     flag: "🇺🇦",
     nationality: "ウクライナ",
     nickname: "キャット（Cat）",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Oleksandr_Usyk_2019_%28cropped%29.jpg/480px-Oleksandr_Usyk_2019_%28cropped%29.jpg",
     born: "1987年1月17日",
     birthplace: "サイミー、ウクライナ（旧ソ連）",
     height: "191cm",
@@ -242,6 +247,7 @@ const fighters: Fighter[] = [
     flag: "🇷🇺",
     nationality: "ロシア（チェチェン系カナダ国籍）",
     nickname: "Aртур",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Artur_Beterbiev_%2849012978918%29.jpg/480px-Artur_Beterbiev_%2849012978918%29.jpg",
     born: "1985年1月22日",
     birthplace: "ハサビュルト、ダゲスタン、ロシア",
     height: "183cm",
@@ -288,6 +294,7 @@ const fighters: Fighter[] = [
     flag: "🇺🇸",
     nationality: "アメリカ",
     nickname: "Bud（バッド）",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Terence_Crawford_%2849012977543%29.jpg/480px-Terence_Crawford_%2849012977543%29.jpg",
     born: "1987年9月28日",
     birthplace: "ネブラスカ州オマハ",
     height: "170cm",
