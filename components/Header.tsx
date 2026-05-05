@@ -10,6 +10,7 @@ export default function Header() {
           </Link>
           <nav className="hidden md:flex items-center gap-5 text-sm font-medium">
             <Link href="/blog" className="hover:text-red-200 transition-colors">コラム</Link>
+            <Link href="/youtube" className="hover:text-red-200 transition-colors">▶ 動画</Link>
             <Link href="/champions" className="hover:text-red-200 transition-colors">歴代王者</Link>
             <Link href="/matches" className="hover:text-red-200 transition-colors">名試合</Link>
             <Link href="/amateur" className="hover:text-red-200 transition-colors">高校・アマチュア</Link>
@@ -18,9 +19,9 @@ export default function Header() {
           </nav>
           <nav className="flex md:hidden items-center gap-2 text-xs">
             <Link href="/blog" className="hover:text-red-200">コラム</Link>
+            <Link href="/youtube" className="hover:text-red-200">▶動画</Link>
             <Link href="/champions" className="hover:text-red-200">王者</Link>
             <Link href="/matches" className="hover:text-red-200">名試合</Link>
-            <Link href="/amateur" className="hover:text-red-200">学生</Link>
           </nav>
         </div>
       </div>

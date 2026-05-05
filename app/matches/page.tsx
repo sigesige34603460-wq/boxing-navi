@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   keywords: ["ボクシング 名試合", "ボクシング 歴代名勝負", "井上尚弥 ドネア", "アリ フォアマン", "メイウェザー パッキャオ"],
 };
 
+function ytUrl(q: string) {
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
+}
+
 const MATCHES = [
   {
     year: "2019",
@@ -18,6 +22,7 @@ const MATCHES = [
     result: "井上尚弥 判定勝利",
     tag: "日本",
     highlight: true,
+    ytQuery: "井上尚弥 ドネア 2019 試合",
   },
   {
     year: "1974",
@@ -27,6 +32,7 @@ const MATCHES = [
     result: "アリ 8RKO勝利",
     tag: "伝説",
     highlight: true,
+    ytQuery: "アリ フォアマン ジャングルの戦い",
   },
   {
     year: "1975",
@@ -36,6 +42,7 @@ const MATCHES = [
     result: "アリ 14RTKOで勝利",
     tag: "伝説",
     highlight: false,
+    ytQuery: "アリ フレージャー スリラーインマニラ",
   },
   {
     year: "2015",
@@ -45,6 +52,7 @@ const MATCHES = [
     result: "メイウェザー 判定勝利",
     tag: "世界",
     highlight: false,
+    ytQuery: "メイウェザー パッキャオ 2015 試合",
   },
   {
     year: "2021",
@@ -54,6 +62,7 @@ const MATCHES = [
     result: "ウシク 判定勝利",
     tag: "世界",
     highlight: false,
+    ytQuery: "ウシク ジョシュア 試合",
   },
   {
     year: "1996",
@@ -63,6 +72,7 @@ const MATCHES = [
     result: "辰吉 7RKO勝利",
     tag: "日本",
     highlight: false,
+    ytQuery: "辰吉丈一郎 試合",
   },
   {
     year: "1982",
@@ -72,6 +82,7 @@ const MATCHES = [
     result: "具志堅 KO勝利",
     tag: "日本",
     highlight: false,
+    ytQuery: "具志堅用高 試合",
   },
   {
     year: "2023",
@@ -81,6 +92,7 @@ const MATCHES = [
     result: "井上 8RTKOで勝利",
     tag: "日本",
     highlight: false,
+    ytQuery: "井上尚弥 フルトン 試合",
   },
 ];
 
@@ -127,9 +139,21 @@ export default function MatchesPage() {
                 </div>
                 <h2 className="text-xl font-black text-gray-900 mb-2">{m.title}</h2>
                 <p className="text-sm text-gray-700 leading-relaxed mb-4">{m.desc}</p>
-                <div className="bg-gray-50 rounded-lg px-4 py-2 inline-block">
-                  <span className="text-xs text-gray-500">結果：</span>
-                  <span className="text-sm font-bold text-gray-900 ml-1">{m.result}</span>
+                <div className="flex items-center flex-wrap gap-3">
+                  <div className="bg-gray-50 rounded-lg px-4 py-2">
+                    <span className="text-xs text-gray-500">結果：</span>
+                    <span className="text-sm font-bold text-gray-900 ml-1">{m.result}</span>
+                  </div>
+                  {m.ytQuery && (
+                    <a
+                      href={ytUrl(m.ytQuery)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 bg-red-600 text-white text-xs font-bold px-3 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                    >
+                      <span>▶</span> YouTubeで見る
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
