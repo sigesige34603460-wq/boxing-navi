@@ -18,12 +18,11 @@ function getAllSlugs(): string[] {
   return fs
     .readdirSync(CONTENT_DIR)
     .filter((f) => f.endsWith(".md"))
-    .map((f) => encodeURIComponent(f.replace(".md", "")));
+    .map((f) => f.replace(".md", ""));
 }
 
 function getArticle(slug: string) {
-  const decoded = decodeURIComponent(slug);
-  const filePath = path.join(CONTENT_DIR, `${decoded}.md`);
+  const filePath = path.join(CONTENT_DIR, `${slug}.md`);
   if (!fs.existsSync(filePath)) return null;
   const raw = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(raw);
@@ -33,6 +32,8 @@ function getArticle(slug: string) {
 export async function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }));
 }
+
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

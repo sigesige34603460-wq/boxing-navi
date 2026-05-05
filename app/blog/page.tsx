@@ -21,7 +21,7 @@ function getArticles() {
       const raw = fs.readFileSync(path.join(dir, f), "utf8");
       const { data } = matter(raw);
       return {
-        slug: encodeURIComponent(f.replace(".md", "")),
+        slug: f.replace(".md", ""),
         title: data.title || f,
         date: data.date || "",
         tag: data.tag || "コラム",
