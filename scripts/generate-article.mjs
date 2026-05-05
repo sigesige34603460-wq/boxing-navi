@@ -173,11 +173,16 @@ ${relatedLink ? `## 関連ページ\n\n${relatedLink}` : ''}
 }
 
 function slugify(title) {
-  return title
-    .replace(/[^\w\u3040-\u30FF\u4E00-\u9FFF\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .substring(0, 60)
+  // タイトルのハッシュ値からASCIIスラグを生成（日本語ファイル名を避ける）
+  let hash = 0
+  for (let i = 0; i < title.length; i++) {
+    hash = ((hash << 5) - hash) + title.charCodeAt(i)
+    hash |= 0
+  }
+  const num = Math.abs(hash).toString(36).substring(0, 8)
+  // 英字部分があれば先頭に付ける
+  const ascii = title.match(/[a-zA-Z0-9]+/g)?.join('-').toLowerCase().substring(0, 20) || ''
+  return ascii ? `${ascii}-${num}` : `post-${num}`
 }
 
 async function main() {
