@@ -139,6 +139,7 @@ export default function YoutubePage() {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-lg font-black text-gray-900 mb-4 text-center">関連ページ</h2>
             <div className="flex flex-wrap justify-center gap-3">
+              <Link href="/fighters" className="bg-white border border-gray-200 rounded-full px-5 py-2 text-sm font-medium hover:bg-red-50 hover:border-red-300 transition-colors">🥊 注目選手</Link>
               <Link href="/matches" className="bg-white border border-gray-200 rounded-full px-5 py-2 text-sm font-medium hover:bg-red-50 hover:border-red-300 transition-colors">⚔️ 歴代名試合</Link>
               <Link href="/champions" className="bg-white border border-gray-200 rounded-full px-5 py-2 text-sm font-medium hover:bg-red-50 hover:border-red-300 transition-colors">🏆 歴代王者特集</Link>
               <Link href="/amateur" className="bg-white border border-gray-200 rounded-full px-5 py-2 text-sm font-medium hover:bg-red-50 hover:border-red-300 transition-colors">🏫 高校・アマチュア</Link>

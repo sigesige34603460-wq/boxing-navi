@@ -193,12 +193,12 @@ export default function AmateurPage() {
             <h2 className="text-xl font-black text-gray-900 mb-6">📝 高校・アマチュア 関連コラム</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { title: "高校ボクシング全国大会完全ガイド：インターハイ・選抜・国体の仕組み", tag: "高校・アマチュア" },
-                { title: "ボクシングの強豪高校一覧：全国制覇を狙う名門校の特徴", tag: "高校・アマチュア" },
-                { title: "小学生・ジュニアボクシング：子どもにボクシングを習わせるメリットと注意点", tag: "高校・アマチュア" },
-                { title: "井上尚弥の高校時代：東農大二高での活躍とアマチュア戦績", tag: "高校・アマチュア" },
+                { title: "高校ボクシング完全ガイド：インターハイ・強豪校・始め方まで", tag: "高校・アマチュア", slug: "/blog/2026-05-04-highschool-boxing-guide" },
+                { title: "小学生・中学生からボクシングを始めるには：ジュニアボクシング完全ガイド", tag: "高校・アマチュア", slug: "/blog/2026-05-04-junior-boxing-guide" },
+                { title: "井上尚弥の強さの秘密：なぜ「モンスター」と呼ばれるのか", tag: "選手分析", slug: "/blog/2026-05-04-inoue-naoya-monster" },
+                { title: "ボクシングのルール完全ガイド：KO・判定・反則をわかりやすく解説", tag: "初心者向け", slug: "/blog/2026-05-04-boxing-rules-beginner" },
               ].map((a, i) => (
-                <Link key={i} href="/blog" className="block bg-gray-50 border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                <Link key={i} href={a.slug} className="block bg-gray-50 border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
                   <span className="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded mb-2">{a.tag}</span>
                   <p className="text-sm font-bold text-gray-900">{a.title}</p>
                 </Link>

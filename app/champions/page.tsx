@@ -3,6 +3,13 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+// 現役選手でfightersページがある選手のIDマッピング
+const FIGHTER_LINKS: Record<string, string> = {
+  "井上尚弥": "/fighters/naoya-inoue",
+  "カネロ・アルバレス": "/fighters/canelo-alvarez",
+  "オレクサンドル・ウシク": "/fighters/oleksandr-usyk",
+};
+
 export const metadata: Metadata = {
   title: "歴代王者特集 | 伝説のボクシングチャンピオンたち",
   description: "モハメド・アリ、マイク・タイソン、井上尚弥など歴代ボクシング王者の記録と伝説をまとめて紹介。",
@@ -138,20 +145,37 @@ export default function ChampionsPage() {
         <section className="py-12 px-4">
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {CHAMPIONS.map((c) => (
-                <div key={c.name} className={`bg-white border-2 rounded-2xl p-6 ${colorMap[c.color]}`}>
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <p className="text-xs font-bold mb-1">{c.nationality} | {c.era}</p>
-                      <h2 className="text-2xl font-black text-gray-900">{c.name}</h2>
-                      <p className="text-sm text-gray-500">{c.nameEn}</p>
+              {CHAMPIONS.map((c) => {
+                const fighterLink = FIGHTER_LINKS[c.name];
+                const CardWrapper = fighterLink
+                  ? ({ children }: { children: React.ReactNode }) => (
+                      <Link href={fighterLink} className={`block bg-white border-2 rounded-2xl p-6 hover:shadow-lg transition-shadow ${colorMap[c.color]}`}>
+                        {children}
+                      </Link>
+                    )
+                  : ({ children }: { children: React.ReactNode }) => (
+                      <div className={`bg-white border-2 rounded-2xl p-6 ${colorMap[c.color]}`}>
+                        {children}
+                      </div>
+                    );
+                return (
+                  <CardWrapper key={c.name}>
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="text-xs font-bold mb-1">{c.nationality} | {c.era}</p>
+                        <h2 className="text-2xl font-black text-gray-900">{c.name}</h2>
+                        <p className="text-sm text-gray-500">{c.nameEn}</p>
+                      </div>
+                      {fighterLink && (
+                        <span className="text-xs font-bold text-blue-600 shrink-0">詳細 →</span>
+                      )}
                     </div>
-                  </div>
-                  <p className="text-xs font-bold text-gray-600 mb-1">{c.title}</p>
-                  <p className="text-xs text-gray-500 mb-4">戦績：{c.record}</p>
-                  <p className="text-sm text-gray-700 leading-relaxed">{c.highlight}</p>
-                </div>
-              ))}
+                    <p className="text-xs font-bold text-gray-600 mb-1">{c.title}</p>
+                    <p className="text-xs text-gray-500 mb-4">戦績：{c.record}</p>
+                    <p className="text-sm text-gray-700 leading-relaxed">{c.highlight}</p>
+                  </CardWrapper>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -162,12 +186,12 @@ export default function ChampionsPage() {
             <h2 className="text-xl font-black text-gray-900 mb-6">📝 歴代王者 関連コラム</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { title: "モハメド・アリの軌跡：ボクシングを超えた20世紀最大のヒーロー", tag: "歴代王者特集" },
-                { title: "マイク・タイソンの全盛期：史上最恐ヘビー級王者の伝説", tag: "歴代王者特集" },
-                { title: "具志堅用高：13度防衛の偉業と伝説のボクシング人生", tag: "歴代王者特集" },
-                { title: "歴代ヘビー級王者列伝：アリからフューリーまでの最強ボクサーたち", tag: "歴代王者特集" },
+                { title: "辰吉丈一郎の伝説：波乱万丈のボクシング人生", tag: "歴代王者", slug: "/blog/2026-05-05-tatsuyoshi-legend" },
+                { title: "メイウェザー vs パッキャオ：史上最高額「世紀の一戦」を徹底解説", tag: "歴代名試合", slug: "/blog/2026-05-04-mayweather-pacquiao" },
+                { title: "アリ vs フォアマン「ジャングルの戦い」：世紀の逆転劇を徹底解説", tag: "歴代名試合", slug: "/blog/2026-05-04-ali-foreman-rumble" },
+                { title: "井上尚弥の強さの秘密：なぜ「モンスター」と呼ばれるのか", tag: "選手分析", slug: "/blog/2026-05-04-inoue-naoya-monster" },
               ].map((a, i) => (
-                <Link key={i} href="/blog" className="block bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                <Link key={i} href={a.slug} className="block bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
                   <span className="inline-block bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded mb-2">{a.tag}</span>
                   <p className="text-sm font-bold text-gray-900">{a.title}</p>
                 </Link>

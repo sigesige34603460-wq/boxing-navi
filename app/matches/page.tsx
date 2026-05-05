@@ -166,12 +166,12 @@ export default function MatchesPage() {
             <h2 className="text-xl font-black text-gray-900 mb-6">📝 名試合 関連コラム</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { title: "ボクシング史上最高の試合TOP10：専門家が選ぶ伝説の一戦", tag: "歴代名試合" },
-                { title: "アリ vs フォアマン「ジャングルの戦い」：世紀の逆転劇を徹底解説", tag: "歴代名試合" },
-                { title: "井上尚弥 vs ドネア第1戦：日本ボクシング史上最高試合と言われる理由", tag: "歴代名試合" },
-                { title: "メイウェザー vs パッキャオ：世紀の一戦の内容と歴史的意義", tag: "歴代名試合" },
+                { title: "アリ vs フォアマン「ジャングルの戦い」：世紀の逆転劇を徹底解説", tag: "歴代名試合", slug: "/blog/2026-05-04-ali-foreman-rumble" },
+                { title: "メイウェザー vs パッキャオ：世紀の一戦の内容と歴史的意義", tag: "歴代名試合", slug: "/blog/2026-05-04-mayweather-pacquiao" },
+                { title: "井上尚弥の強さの秘密：なぜ「モンスター」と呼ばれるのか", tag: "選手分析", slug: "/blog/2026-05-04-inoue-naoya-monster" },
+                { title: "辰吉丈一郎の伝説：波乱万丈のボクシング人生", tag: "歴代名試合", slug: "/blog/2026-05-05-tatsuyoshi-legend" },
               ].map((a, i) => (
-                <Link key={i} href="/blog" className="block bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                <Link key={i} href={a.slug} className="block bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
                   <span className="inline-block bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded mb-2">{a.tag}</span>
                   <p className="text-sm font-bold text-gray-900">{a.title}</p>
                 </Link>
