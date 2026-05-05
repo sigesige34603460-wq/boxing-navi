@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import fighters, { featuredFighters } from "./fighters/data";
 
 export default function Home() {
   return (
@@ -36,50 +37,43 @@ export default function Home() {
         {/* 注目選手 */}
         <section className="py-12 px-4 bg-white">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl font-black text-gray-900 mb-8 text-center">
-              注目選手
-            </h2>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-black text-gray-900">注目選手</h2>
+              <Link href="/fighters" className="text-red-600 text-sm font-medium hover:underline">
+                すべての選手を見る →
+              </Link>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                {
-                  name: "井上尚弥",
-                  nameEn: "Naoya Inoue",
-                  title: "WBO・WBC・IBF・WBA スーパーバンタム級王者",
-                  desc: "「モンスター」の異名を持つ日本最強ボクサー。4団体統一王者として世界に君臨。",
-                  rank: "世界ランク #1",
-                  color: "red",
-                },
-                {
-                  name: "田中恒成",
-                  nameEn: "Kosei Tanaka",
-                  title: "元3階級世界王者",
-                  desc: "史上最年少・最速で3階級制覇を達成した日本ボクシング界のレジェンド。",
-                  rank: "元3階級王者",
-                  color: "blue",
-                },
-                {
-                  name: "カネロ・アルバレス",
-                  nameEn: "Canelo Alvarez",
-                  title: "スーパーミドル級4団体統一王者",
-                  desc: "現代ボクシング最高峰と称されるメキシコの英雄。圧倒的な実力でスーパーミドルを制覇。",
-                  rank: "世界ランク #1",
-                  color: "green",
-                },
-              ].map((f) => (
-                <div key={f.name} className="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
-                  <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-3 ${
-                    f.color === "red" ? "bg-red-100 text-red-700" :
-                    f.color === "blue" ? "bg-blue-100 text-blue-700" :
-                    "bg-green-100 text-green-700"
-                  }`}>
-                    {f.rank}
-                  </div>
-                  <h3 className="text-xl font-black text-gray-900">{f.name}</h3>
-                  <p className="text-sm text-gray-500 mb-2">{f.nameEn}</p>
-                  <p className="text-xs font-medium text-gray-600 mb-3">{f.title}</p>
-                  <p className="text-sm text-gray-700">{f.desc}</p>
-                </div>
-              ))}
+              {featuredFighters.map((fid) => {
+                const f = fighters.find((x) => x.id === fid);
+                if (!f) return null;
+                const colorBadge =
+                  f.color === "red" ? "bg-red-100 text-red-700" :
+                  f.color === "blue" ? "bg-blue-100 text-blue-700" :
+                  f.color === "green" ? "bg-green-100 text-green-700" :
+                  f.color === "yellow" ? "bg-yellow-100 text-yellow-700" :
+                  f.color === "purple" ? "bg-purple-100 text-purple-700" :
+                  "bg-orange-100 text-orange-700";
+                return (
+                  <Link
+                    key={f.id}
+                    href={`/fighters/${f.id}`}
+                    className="block border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${colorBadge}`}>
+                        {f.rankLabel}
+                      </span>
+                      <span className="text-xl">{f.flag}</span>
+                    </div>
+                    <h3 className="text-xl font-black text-gray-900">{f.name}</h3>
+                    <p className="text-sm text-gray-500 mb-1">{f.nameEn}</p>
+                    <p className="text-xs font-medium text-gray-600 mb-3">「{f.nickname}」</p>
+                    <p className="text-sm text-gray-700 mb-4">{f.tagline}</p>
+                    <p className="text-red-600 text-xs font-bold">詳細プロフィールを見る →</p>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
