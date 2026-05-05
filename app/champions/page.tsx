@@ -156,16 +156,28 @@ export default function ChampionsPage() {
           </div>
         </section>
 
-        {/* コラムへ誘導 */}
-        <section className="py-10 px-4 bg-red-50">
-          <div className="max-w-2xl mx-auto text-center">
-            <p className="font-bold text-gray-900 mb-3">歴代王者の詳細はコラムで！</p>
-            <Link
-              href="/blog"
-              className="inline-block bg-red-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-red-700 transition-colors"
-            >
-              コラム一覧を見る →
-            </Link>
+        {/* 関連コラム */}
+        <section className="py-12 px-4 bg-gray-50">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-xl font-black text-gray-900 mb-6">📝 歴代王者 関連コラム</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { title: "モハメド・アリの軌跡：ボクシングを超えた20世紀最大のヒーロー", tag: "歴代王者特集" },
+                { title: "マイク・タイソンの全盛期：史上最恐ヘビー級王者の伝説", tag: "歴代王者特集" },
+                { title: "具志堅用高：13度防衛の偉業と伝説のボクシング人生", tag: "歴代王者特集" },
+                { title: "歴代ヘビー級王者列伝：アリからフューリーまでの最強ボクサーたち", tag: "歴代王者特集" },
+              ].map((a, i) => (
+                <Link key={i} href="/blog" className="block bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                  <span className="inline-block bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded mb-2">{a.tag}</span>
+                  <p className="text-sm font-bold text-gray-900">{a.title}</p>
+                </Link>
+              ))}
+            </div>
+            <div className="text-center mt-6">
+              <Link href="/blog" className="inline-block bg-red-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-red-700 transition-colors">
+                コラム一覧をすべて見る →
+              </Link>
+            </div>
           </div>
         </section>
       </main>

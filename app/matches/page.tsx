@@ -136,16 +136,28 @@ export default function MatchesPage() {
           </div>
         </section>
 
-        {/* コラムへ誘導 */}
-        <section className="py-10 px-4 bg-red-50">
-          <div className="max-w-2xl mx-auto text-center">
-            <p className="font-bold text-gray-900 mb-3">名試合の詳細解説はコラムで！</p>
-            <Link
-              href="/blog"
-              className="inline-block bg-red-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-red-700 transition-colors"
-            >
-              コラム一覧を見る →
-            </Link>
+        {/* 関連コラム */}
+        <section className="py-12 px-4 bg-gray-50">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-xl font-black text-gray-900 mb-6">📝 名試合 関連コラム</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { title: "ボクシング史上最高の試合TOP10：専門家が選ぶ伝説の一戦", tag: "歴代名試合" },
+                { title: "アリ vs フォアマン「ジャングルの戦い」：世紀の逆転劇を徹底解説", tag: "歴代名試合" },
+                { title: "井上尚弥 vs ドネア第1戦：日本ボクシング史上最高試合と言われる理由", tag: "歴代名試合" },
+                { title: "メイウェザー vs パッキャオ：世紀の一戦の内容と歴史的意義", tag: "歴代名試合" },
+              ].map((a, i) => (
+                <Link key={i} href="/blog" className="block bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                  <span className="inline-block bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded mb-2">{a.tag}</span>
+                  <p className="text-sm font-bold text-gray-900">{a.title}</p>
+                </Link>
+              ))}
+            </div>
+            <div className="text-center mt-6">
+              <Link href="/blog" className="inline-block bg-red-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-red-700 transition-colors">
+                コラム一覧をすべて見る →
+              </Link>
+            </div>
           </div>
         </section>
       </main>

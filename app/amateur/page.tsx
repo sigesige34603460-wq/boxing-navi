@@ -187,16 +187,37 @@ export default function AmateurPage() {
           </div>
         </section>
 
-        {/* コラムへ誘導 */}
-        <section className="py-10 px-4 bg-white">
-          <div className="max-w-2xl mx-auto text-center">
-            <p className="font-bold text-gray-900 mb-3">高校・アマチュアボクシングの詳細はコラムで！</p>
-            <Link
-              href="/blog"
-              className="inline-block bg-red-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-red-700 transition-colors"
-            >
-              コラム一覧を見る →
-            </Link>
+        {/* 関連コラム */}
+        <section className="py-12 px-4 bg-white">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-xl font-black text-gray-900 mb-6">📝 高校・アマチュア 関連コラム</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { title: "高校ボクシング全国大会完全ガイド：インターハイ・選抜・国体の仕組み", tag: "高校・アマチュア" },
+                { title: "ボクシングの強豪高校一覧：全国制覇を狙う名門校の特徴", tag: "高校・アマチュア" },
+                { title: "小学生・ジュニアボクシング：子どもにボクシングを習わせるメリットと注意点", tag: "高校・アマチュア" },
+                { title: "井上尚弥の高校時代：東農大二高での活躍とアマチュア戦績", tag: "高校・アマチュア" },
+              ].map((a, i) => (
+                <Link key={i} href="/blog" className="block bg-gray-50 border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                  <span className="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded mb-2">{a.tag}</span>
+                  <p className="text-sm font-bold text-gray-900">{a.title}</p>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-4 bg-blue-50 rounded-xl p-4 text-center">
+              <p className="text-sm text-gray-700 mb-3">高校ボクシングの試合動画もYouTubeで見られます</p>
+              <a
+                href="https://www.youtube.com/results?search_query=%E9%AB%98%E6%A0%A1%E3%83%9C%E3%82%AF%E3%82%B7%E3%83%B3%E3%82%B0+%E8%A9%A6%E5%90%88"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-red-600 text-white font-bold px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm mr-3"
+              >
+                ▶ YouTubeで高校ボクシングを見る
+              </a>
+              <Link href="/blog" className="inline-block border border-gray-300 text-gray-700 font-bold px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm">
+                コラム一覧を見る →
+              </Link>
+            </div>
           </div>
         </section>
       </main>

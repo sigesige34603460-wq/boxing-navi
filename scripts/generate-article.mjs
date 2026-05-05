@@ -104,13 +104,38 @@ const TOPICS = [
   { title: '日本人同士の世界タイトルマッチ名勝負5選：国内で盛り上がった歴史的一戦', tag: '歴代名試合' },
 ]
 
+// タグ→関連ページのマッピング
+const TAG_LINKS = {
+  '歴代名試合': '歴代名試合一覧は[こちら](/matches)でもご覧いただけます。',
+  '歴代王者特集': '歴代王者一覧は[こちら](/champions)でもご覧いただけます。',
+  '高校・アマチュア': '高校・アマチュアボクシングの詳細は[こちら](/amateur)をご覧ください。',
+  '観戦ガイド': 'ボクシングの観戦方法は[こちら](/watch)で詳しく解説しています。',
+  '初心者向け': 'ボクシング初心者ガイドは[こちら](/beginners)もご参照ください。',
+  'YouTube・動画': 'DAZNでの視聴方法は[こちら](/watch)をご覧ください。',
+}
+
+// タグ→YouTubeキーワードのマッピング
+const YOUTUBE_KEYWORDS = {
+  '歴代名試合': '名試合 ボクシング ダイジェスト',
+  '歴代王者特集': 'ボクシング 名王者 名試合',
+  '選手分析': 'ボクシング 選手 試合',
+  '試合解説': 'ボクシング 試合 ハイライト',
+  '高校・アマチュア': '高校ボクシング 試合',
+  'YouTube・動画': 'ボクシング YouTube おすすめ',
+  '日本ボクシング': '日本ボクシング 名試合',
+}
+
 async function generateArticle(topic) {
+  const relatedLink = TAG_LINKS[topic.tag] || ''
+  const ytKeyword = YOUTUBE_KEYWORDS[topic.tag] || `${topic.title} ボクシング`
+  const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ytKeyword)}`
+
   const prompt = `ボクシングサイト「ボクシングナビ」向けのコラム記事を書いてください。
 
 タイトル：${topic.title}
 カテゴリ：${topic.tag}
 
-以下の形式でMarkdownを出力してください：
+必ず以下の形式でMarkdownをそのまま出力してください（\`\`\`markdown などのコードブロックは使わないこと）：
 
 ---
 title: "${topic.title}"
@@ -119,9 +144,20 @@ tag: "${topic.tag}"
 description: "（100文字以内の記事概要）"
 ---
 
-（記事本文：1500〜2000文字、## 見出しを3〜5個使用、ボクシングファンが楽しめる内容）
+（記事本文：1500〜2000文字、## 見出しを3〜5個使用）
+
+記事の末尾に必ず以下のセクションを追加してください：
+
+## YouTubeで試合・動画を見る
+
+この記事のテーマに関連する動画をYouTubeで検索できます。
+
+[▶ YouTubeで「${ytKeyword}」を検索する](${ytSearchUrl})
+
+${relatedLink ? `## 関連ページ\n\n${relatedLink}` : ''}
 
 注意：
+- コードブロック(\`\`\`)で囲まない。frontmatterから直接始める
 - 読みやすい日本語で書く
 - 具体的な数字・事実を交える
 - 初心者にも分かりやすく説明する
