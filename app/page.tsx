@@ -129,6 +129,63 @@ export default function Home() {
           </div>
         </section>
 
+        {/* 歴代名試合 */}
+        <section className="py-12 px-4 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-black text-gray-900">⚔️ 歴代名試合</h2>
+              <Link href="/matches" className="text-red-600 text-sm font-medium hover:underline">
+                すべて見る →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { year: "2019", title: "井上尚弥 vs ドネア", note: "2019年最高試合・壮絶な打ち合い" },
+                { year: "1974", title: "アリ vs フォアマン", note: "「ジャングルの戦い」世紀の逆転劇" },
+                { year: "2015", title: "メイウェザー vs パッキャオ", note: "史上最高額・世紀の一戦" },
+                { year: "2021", title: "ウシク vs ジョシュア", note: "技術の極致がヘビー級を制す" },
+              ].map((m) => (
+                <Link key={m.title} href="/matches" className="flex items-center gap-4 bg-gray-50 border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                  <span className="bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded shrink-0">{m.year}</span>
+                  <div>
+                    <p className="font-black text-gray-900 text-sm">{m.title}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{m.note}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 高校・アマチュア */}
+        <section className="py-12 px-4 bg-blue-50">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-2xl font-black text-gray-900">🏫 高校・アマチュアボクシング</h2>
+                <p className="text-sm text-gray-500 mt-1">インターハイ・ジュニア大会・強豪校情報</p>
+              </div>
+              <Link href="/amateur" className="text-blue-600 text-sm font-medium hover:underline">
+                詳しく見る →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { icon: "🏆", label: "インターハイ", sub: "高校生最高峰の舞台" },
+                { icon: "🎓", label: "JOCジュニア", sub: "中高生の全国大会" },
+                { icon: "🏫", label: "強豪校情報", sub: "全国の名門校一覧" },
+                { icon: "👦", label: "始め方ガイド", sub: "小中高から始める方法" },
+              ].map((item) => (
+                <Link key={item.label} href="/amateur" className="bg-white border border-blue-200 rounded-xl p-4 text-center hover:shadow-md transition-shadow">
+                  <p className="text-2xl mb-2">{item.icon}</p>
+                  <p className="font-black text-sm text-gray-900">{item.label}</p>
+                  <p className="text-xs text-gray-500 mt-1">{item.sub}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* 歴代王者特集 */}
         <section className="py-12 px-4 bg-gray-900 text-white">
           <div className="max-w-6xl mx-auto">
