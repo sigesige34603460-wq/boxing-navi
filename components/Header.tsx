@@ -10,11 +10,13 @@ export default function Header() {
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <Link href="/blog" className="hover:text-red-200 transition-colors">コラム</Link>
+            <Link href="/champions" className="hover:text-red-200 transition-colors">歴代王者</Link>
             <Link href="/watch" className="hover:text-red-200 transition-colors">観戦方法</Link>
             <Link href="/beginners" className="hover:text-red-200 transition-colors">初心者ガイド</Link>
           </nav>
-          <nav className="flex md:hidden items-center gap-4 text-xs">
+          <nav className="flex md:hidden items-center gap-3 text-xs">
             <Link href="/blog" className="hover:text-red-200">コラム</Link>
+            <Link href="/champions" className="hover:text-red-200">王者</Link>
             <Link href="/watch" className="hover:text-red-200">観戦</Link>
             <Link href="/beginners" className="hover:text-red-200">初心者</Link>
           </nav>

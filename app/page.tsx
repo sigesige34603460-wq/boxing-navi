@@ -129,6 +129,69 @@ export default function Home() {
           </div>
         </section>
 
+        {/* 歴代王者特集 */}
+        <section className="py-12 px-4 bg-gray-900 text-white">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-black">🏆 歴代王者特集</h2>
+              <Link href="/champions" className="text-red-400 text-sm font-medium hover:underline">
+                すべて見る →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { name: "モハメド・アリ", title: "元ヘビー級3度王者", flag: "🇺🇸" },
+                { name: "マイク・タイソン", title: "史上最年少ヘビー級王者", flag: "🇺🇸" },
+                { name: "具志堅用高", title: "13度防衛の日本の伝説", flag: "🇯🇵" },
+                { name: "マニー・パッキャオ", title: "史上唯一の8階級制覇", flag: "🇵🇭" },
+              ].map((c) => (
+                <Link key={c.name} href="/champions" className="bg-gray-800 rounded-xl p-4 hover:bg-gray-700 transition-colors text-center">
+                  <p className="text-2xl mb-2">{c.flag}</p>
+                  <p className="font-black text-sm mb-1">{c.name}</p>
+                  <p className="text-xs text-gray-400">{c.title}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* YouTube動画ガイド */}
+        <section className="py-12 px-4 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-2xl font-black text-gray-900 mb-2 text-center">📺 YouTubeでボクシングを楽しもう</h2>
+            <p className="text-center text-gray-500 text-sm mb-8">無料で見られるボクシング動画・解説チャンネルをご紹介</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                {
+                  icon: "🥊",
+                  title: "試合ダイジェスト",
+                  desc: "井上尚弥など注目試合のハイライトがYouTubeで無料公開。試合前の予習にも最適。",
+                  link: "/blog",
+                },
+                {
+                  icon: "🎙️",
+                  title: "ボクシング解説動画",
+                  desc: "元プロボクサーや専門家によるわかりやすい試合解説・選手分析が充実。",
+                  link: "/blog",
+                },
+                {
+                  icon: "🏋️",
+                  title: "トレーニング動画",
+                  desc: "ジムに行く前に自宅でできるシャドウ練習・フットワーク練習を動画で学べる。",
+                  link: "/blog",
+                },
+              ].map((item, i) => (
+                <Link key={i} href={item.link} className="block bg-gray-50 border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+                  <p className="text-4xl mb-3">{item.icon}</p>
+                  <p className="font-black text-gray-900 mb-2">{item.title}</p>
+                  <p className="text-sm text-gray-600">{item.desc}</p>
+                  <p className="text-red-600 text-sm font-medium mt-3">詳しく読む →</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* 初心者ガイドリンク */}
         <section className="py-12 px-4 bg-gray-50">
           <div className="max-w-4xl mx-auto">
