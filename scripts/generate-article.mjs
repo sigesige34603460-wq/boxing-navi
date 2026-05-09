@@ -1,5 +1,7 @@
 /**
  * ボクシングコラム記事 自動生成スクリプト
+ * - 1日3記事生成（カテゴリローテーション）
+ * - 最新試合情報JSONも自動更新
  */
 
 import Anthropic from '@anthropic-ai/sdk'
@@ -10,98 +12,100 @@ import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
 const OUTPUT_DIR = path.join(ROOT, 'content/blog')
+const MATCHES_FILE = path.join(ROOT, 'content/latest-matches.json')
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-const TOPICS = [
-  // 選手分析
-  { title: '井上尚弥の強さの秘密：パンチ力・スピード・IQを徹底分析', tag: '選手分析' },
-  { title: 'カネロ・アルバレスはなぜ最強と言われるのか？その戦術と実力', tag: '選手分析' },
-  { title: '田中恒成が3階級制覇できた理由：天才ボクサーの戦い方', tag: '選手分析' },
-  { title: '村田諒太の軌跡：オリンピック金から世界王者への道', tag: '選手分析' },
-  { title: 'タイソン・フューリーのボクシングスタイル：なぜ倒せないのか', tag: '選手分析' },
-  { title: 'オレクサンドル・ウシクはなぜヘビー級でも強いのか', tag: '選手分析' },
-  { title: 'マニー・パッキャオ：8階級制覇の伝説とそのボクシングスタイル', tag: '選手分析' },
-  { title: 'フロイド・メイウェザーJr.の無敗の秘密：ディフェンスの芸術', tag: '選手分析' },
-  { title: '長谷川穂積の3階級制覇：日本ボクシングが誇るアウトボクサー', tag: '選手分析' },
-  { title: '亀田興毅・大毅・和毅：亀田三兄弟のボクシング人生を振り返る', tag: '選手分析' },
-  // 観戦ガイド
-  { title: 'DAZNでボクシングを見る方法：登録から視聴まで完全ガイド', tag: '観戦ガイド' },
-  { title: 'WOWOWのボクシング中継完全ガイド：視聴方法・料金・見どころ', tag: '観戦ガイド' },
-  { title: 'ボクシング判定の見方：採点基準とジャッジの評価方法を解説', tag: '観戦ガイド' },
-  { title: 'ボクシング生観戦の楽しみ方：チケット購入からマナーまで', tag: '観戦ガイド' },
-  { title: 'Amazonプライムでボクシングを見る方法：配信試合一覧と視聴手順', tag: '観戦ガイド' },
-  { title: 'YouTubeでボクシングを楽しむ方法：無料で見られるおすすめチャンネル', tag: '観戦ガイド' },
-  // YouTube・動画
-  { title: 'ボクシング解説YouTubeチャンネルおすすめ5選：初心者から上級者まで', tag: 'YouTube・動画' },
-  { title: '井上尚弥の試合ダイジェスト動画まとめ：YouTubeで見られる名シーン', tag: 'YouTube・動画' },
-  { title: 'ボクシングトレーニング動画おすすめ：自宅でできるシャドウ練習', tag: 'YouTube・動画' },
-  { title: '海外ボクシング解説チャンネルの楽しみ方：英語でも楽しめるコンテンツ', tag: 'YouTube・動画' },
-  { title: 'ボクシング名試合アーカイブ：YouTubeで無料で見られる伝説の一戦', tag: 'YouTube・動画' },
-  { title: 'ボクシングジム公式YouTubeチャンネル：プロの練習風景が見られる', tag: 'YouTube・動画' },
-  // 歴代王者特集
-  { title: '歴代ヘビー級王者列伝：アリからフューリーまでの最強ボクサーたち', tag: '歴代王者特集' },
-  { title: '日本人歴代最強ボクサーランキング：世界を驚かせたチャンピオンたち', tag: '歴代王者特集' },
-  { title: '具志堅用高：13度防衛の偉業と伝説のボクシング人生', tag: '歴代王者特集' },
-  { title: 'モハメド・アリの軌跡：ボクシングを超えた20世紀最大のヒーロー', tag: '歴代王者特集' },
-  { title: 'マイク・タイソンの全盛期：史上最恐ヘビー級王者の伝説', tag: '歴代王者特集' },
-  { title: '辰吉丈一郎の伝説：浪速のジョーが刻んだ日本ボクシング史', tag: '歴代王者特集' },
-  { title: 'シュガー・レイ・レナードとロベルト・デュランの名勝負：伝説の3部作', tag: '歴代王者特集' },
-  { title: 'マルコス・マイダナ：アルゼンチンが生んだ激闘王の生涯', tag: '歴代王者特集' },
-  { title: '西岡利晃：WBCフェザー級王者として世界に認められた日本人ボクサー', tag: '歴代王者特集' },
-  { title: '歴代スーパーバンタム級王者列伝：井上尚弥が君臨する階級の歴史', tag: '歴代王者特集' },
-  { title: 'ホセ・ナポレス：キューバが生んだウェルター級の帝王', tag: '歴代王者特集' },
-  { title: 'ロベルト・デュラン：「ストーン・ハンズ」と呼ばれた4階級制覇王者', tag: '歴代王者特集' },
-  // 初心者向け
-  { title: 'ボクシング初心者が最初に知るべき10のこと', tag: '初心者向け' },
-  { title: 'WBC・WBA・IBF・WBOの違いとは？世界4団体をわかりやすく解説', tag: '初心者向け' },
-  { title: 'ボクシングのルール完全ガイド：反則・ダウン・判定をわかりやすく解説', tag: '初心者向け' },
-  { title: 'ボクシングの階級一覧：ミニマム級からヘビー級まで全解説', tag: '初心者向け' },
-  { title: 'ボクシングジムの選び方：初心者が後悔しないための5つのポイント', tag: '初心者向け' },
-  // 試合解説
-  { title: '歴史に残るボクシング名勝負10選：語り継がれる伝説の試合', tag: '試合解説' },
-  { title: '井上尚弥 vs ノニト・ドネア：日本ボクシング史上最高試合を振り返る', tag: '試合解説' },
-  { title: '日本ボクシング史上最大の番狂わせ：衝撃のアップセット5選', tag: '試合解説' },
-  { title: 'アリ vs フレージャー「スリラー・イン・マニラ」：世紀の3部作を振り返る', tag: '試合解説' },
-  { title: 'カネロ vs GGG：3試合にわたる壮絶な名勝負の全記録', tag: '試合解説' },
-  // 海外ボクシング
-  { title: 'メキシコとボクシング：なぜメキシカンボクサーは強いのか', tag: '海外ボクシング' },
-  { title: 'フィリピンのボクシング文化：マニー・パッキャオが国民的英雄になった理由', tag: '海外ボクシング' },
-  { title: 'キューバボクシングの伝統：アマチュア最強国が生んだスタイル', tag: '海外ボクシング' },
-  { title: 'イギリスボクシングの歴史：フューリー・ジョシュアが生まれた土壌', tag: '海外ボクシング' },
-  { title: 'アメリカボクシングの黄金時代：アリ・フレージャー・フォアマンの時代', tag: '海外ボクシング' },
-  // トレーニング
-  { title: 'ボクシングが最強の有酸素運動である理由：カロリー消費と体への効果', tag: 'トレーニング' },
-  { title: 'ボクシングジムに初めて行く前に知っておきたいこと', tag: 'トレーニング' },
-  { title: 'ボクシンググローブの選び方：初心者に最適なサイズと素材', tag: 'トレーニング' },
-  { title: 'サンドバッグの選び方と自宅トレーニングの始め方', tag: 'トレーニング' },
-  { title: 'ボクシングで痩せる！ダイエット効果と正しいトレーニング方法', tag: 'トレーニング' },
-  // 日本ボクシング
-  { title: '日本人世界王者一覧：戦後から現在までの歴代チャンピオン', tag: '日本ボクシング' },
-  { title: '日本のボクシングジム有名どころ：名門ジムと輩出したチャンピオン', tag: '日本ボクシング' },
-  { title: '大場政夫：天才ボクサーの短くも輝かしいボクシング人生', tag: '日本ボクシング' },
-  // 高校・アマチュアボクシング
-  { title: '高校ボクシング全国大会完全ガイド：インターハイ・選抜・国体の仕組み', tag: '高校・アマチュア' },
-  { title: '高校ボクシング注目選手2024：将来のプロを目指す逸材たち', tag: '高校・アマチュア' },
-  { title: 'ボクシングの強豪高校一覧：全国制覇を狙う名門校の特徴', tag: '高校・アマチュア' },
-  { title: 'アマチュアボクシングとプロボクシングの違い：ルール・採点・装備を徹底比較', tag: '高校・アマチュア' },
-  { title: '中学生からボクシングを始めるには：ジュニアボクシングの始め方ガイド', tag: '高校・アマチュア' },
-  { title: '小学生・ジュニアボクシング：子どもにボクシングを習わせるメリットと注意点', tag: '高校・アマチュア' },
-  { title: 'JOCジュニアオリンピックボクシング：日本最高峰ジュニア大会の見どころ', tag: '高校・アマチュア' },
-  { title: 'オリンピックボクシング：アマチュア最高峰の舞台で輝いた日本人選手たち', tag: '高校・アマチュア' },
-  { title: '井上尚弥の高校時代：東農大二高での活躍とアマチュア戦績', tag: '高校・アマチュア' },
-  { title: '村田諒太のアマチュア時代：オリンピック金メダルへの軌跡', tag: '高校・アマチュア' },
-  // 歴代名試合
-  { title: 'ボクシング史上最高の試合TOP10：専門家が選ぶ伝説の一戦', tag: '歴代名試合' },
-  { title: 'アリ vs フォアマン「ジャングルの戦い」：世紀の逆転劇を徹底解説', tag: '歴代名試合' },
-  { title: '井上尚弥 vs ドネア第1戦：日本ボクシング史上最高試合と言われる理由', tag: '歴代名試合' },
-  { title: 'タイソン vs ルイス：最後の大一番、ヘビー級の歴史を変えた試合', tag: '歴代名試合' },
-  { title: 'メイウェザー vs パッキャオ：世紀の一戦の内容と歴史的意義', tag: '歴代名試合' },
-  { title: 'ウシク vs ジョシュア：クルーザー級の技術がヘビー級を制した名勝負', tag: '歴代名試合' },
-  { title: '辰吉 vs シリモンコン：浪速のジョーの世界奪還劇を振り返る', tag: '歴代名試合' },
-  { title: '具志堅用高の13度目の防衛戦：奇跡の逆転KOが生まれた名勝負', tag: '歴代名試合' },
-  { title: 'カネロ vs コバレフ：2階級制覇を達成した衝撃の試合を解説', tag: '歴代名試合' },
-  { title: '日本人同士の世界タイトルマッチ名勝負5選：国内で盛り上がった歴史的一戦', tag: '歴代名試合' },
+// カテゴリごとにトピックを管理
+const TOPICS_BY_CATEGORY = {
+  '選手分析': [
+    { title: '井上尚弥の強さの秘密：パンチ力・スピード・IQを徹底分析', tag: '選手分析' },
+    { title: 'カネロ・アルバレスはなぜ最強と言われるのか？その戦術と実力', tag: '選手分析' },
+    { title: '村田諒太の軌跡：オリンピック金から世界王者への道', tag: '選手分析' },
+    { title: 'タイソン・フューリーのボクシングスタイル：なぜ倒せないのか', tag: '選手分析' },
+    { title: 'オレクサンドル・ウシクはなぜヘビー級でも強いのか', tag: '選手分析' },
+    { title: 'マニー・パッキャオ：8階級制覇の伝説とそのボクシングスタイル', tag: '選手分析' },
+    { title: 'フロイド・メイウェザーJr.の無敗の秘密：ディフェンスの芸術', tag: '選手分析' },
+    { title: '長谷川穂積の3階級制覇：日本ボクシングが誇るアウトボクサー', tag: '選手分析' },
+    { title: 'ベテルビエフはなぜ全試合KOなのか：圧倒的破壊力の秘密', tag: '選手分析' },
+    { title: 'テレンス・クロフォードのスイッチヒッティング：なぜ対処できないのか', tag: '選手分析' },
+    { title: '那須川天心のボクシング転向：キックボクシング最強がプロボクサーに挑む', tag: '選手分析' },
+  ],
+  '歴代名試合': [
+    { title: 'ボクシング史上最高の試合TOP10：専門家が選ぶ伝説の一戦', tag: '歴代名試合' },
+    { title: 'アリ vs フォアマン「ジャングルの戦い」：世紀の逆転劇を徹底解説', tag: '歴代名試合' },
+    { title: '井上尚弥 vs ドネア第1戦：日本ボクシング史上最高試合と言われる理由', tag: '歴代名試合' },
+    { title: 'タイソン vs ルイス：最後の大一番、ヘビー級の歴史を変えた試合', tag: '歴代名試合' },
+    { title: 'メイウェザー vs パッキャオ：世紀の一戦の内容と歴史的意義', tag: '歴代名試合' },
+    { title: 'ウシク vs ジョシュア：クルーザー級の技術がヘビー級を制した名勝負', tag: '歴代名試合' },
+    { title: '辰吉 vs シリモンコン：浪速のジョーの世界奪還劇を振り返る', tag: '歴代名試合' },
+    { title: '具志堅用高の13度目の防衛戦：奇跡の逆転KOが生まれた名勝負', tag: '歴代名試合' },
+    { title: 'カネロ vs GGG：3試合にわたる壮絶な名勝負の全記録', tag: '歴代名試合' },
+    { title: 'アリ vs フレージャー「スリラー・イン・マニラ」：世紀の3部作を振り返る', tag: '歴代名試合' },
+  ],
+  '初心者向け': [
+    { title: 'ボクシング初心者が最初に知るべき10のこと', tag: '初心者向け' },
+    { title: 'WBC・WBA・IBF・WBOの違いとは？世界4団体をわかりやすく解説', tag: '初心者向け' },
+    { title: 'ボクシングのルール完全ガイド：反則・ダウン・判定をわかりやすく解説', tag: '初心者向け' },
+    { title: 'ボクシングの階級一覧：ミニマム級からヘビー級まで全解説', tag: '初心者向け' },
+    { title: 'ボクシングジムの選び方：初心者が後悔しないための5つのポイント', tag: '初心者向け' },
+    { title: 'ボクシング観戦をもっと楽しむための基礎知識：採点・判定・反則を理解する', tag: '初心者向け' },
+  ],
+  '歴代王者特集': [
+    { title: '歴代ヘビー級王者列伝：アリからフューリーまでの最強ボクサーたち', tag: '歴代王者特集' },
+    { title: '日本人歴代最強ボクサーランキング：世界を驚かせたチャンピオンたち', tag: '歴代王者特集' },
+    { title: '具志堅用高：13度防衛の偉業と伝説のボクシング人生', tag: '歴代王者特集' },
+    { title: 'モハメド・アリの軌跡：ボクシングを超えた20世紀最大のヒーロー', tag: '歴代王者特集' },
+    { title: 'マイク・タイソンの全盛期：史上最恐ヘビー級王者の伝説', tag: '歴代王者特集' },
+    { title: '辰吉丈一郎の伝説：浪速のジョーが刻んだ日本ボクシング史', tag: '歴代王者特集' },
+    { title: 'ロベルト・デュラン：「ストーン・ハンズ」と呼ばれた4階級制覇王者', tag: '歴代王者特集' },
+    { title: '歴代スーパーバンタム級王者列伝：井上尚弥が君臨する階級の歴史', tag: '歴代王者特集' },
+    { title: '西岡利晃：WBCフェザー級王者として世界に認められた日本人ボクサー', tag: '歴代王者特集' },
+    { title: '大場政夫：天才ボクサーの短くも輝かしいボクシング人生', tag: '歴代王者特集' },
+  ],
+  '高校・アマチュア': [
+    { title: '高校ボクシング全国大会完全ガイド：インターハイ・選抜・国体の仕組み', tag: '高校・アマチュア' },
+    { title: '高校ボクシング注目選手：将来のプロを目指す逸材たち', tag: '高校・アマチュア' },
+    { title: 'ボクシングの強豪高校一覧：全国制覇を狙う名門校の特徴', tag: '高校・アマチュア' },
+    { title: 'アマチュアボクシングとプロボクシングの違い：ルール・採点・装備を徹底比較', tag: '高校・アマチュア' },
+    { title: 'JOCジュニアオリンピックボクシング：日本最高峰ジュニア大会の見どころ', tag: '高校・アマチュア' },
+    { title: 'オリンピックボクシング：アマチュア最高峰の舞台で輝いた日本人選手たち', tag: '高校・アマチュア' },
+    { title: '井上尚弥の高校時代：東農大二高での活躍とアマチュア戦績', tag: '高校・アマチュア' },
+    { title: '村田諒太のアマチュア時代：オリンピック金メダルへの軌跡', tag: '高校・アマチュア' },
+  ],
+  '観戦ガイド': [
+    { title: 'DAZNでボクシングを見る方法：登録から視聴まで完全ガイド', tag: '観戦ガイド' },
+    { title: 'WOWOWのボクシング中継完全ガイド：視聴方法・料金・見どころ', tag: '観戦ガイド' },
+    { title: 'ボクシング判定の見方：採点基準とジャッジの評価方法を解説', tag: '観戦ガイド' },
+    { title: 'ボクシング生観戦の楽しみ方：チケット購入からマナーまで', tag: '観戦ガイド' },
+    { title: 'YouTubeでボクシングを楽しむ方法：無料で見られるおすすめチャンネル', tag: '観戦ガイド' },
+  ],
+  '海外ボクシング': [
+    { title: 'メキシコとボクシング：なぜメキシカンボクサーは強いのか', tag: '海外ボクシング' },
+    { title: 'フィリピンのボクシング文化：マニー・パッキャオが国民的英雄になった理由', tag: '海外ボクシング' },
+    { title: 'キューバボクシングの伝統：アマチュア最強国が生んだスタイル', tag: '海外ボクシング' },
+    { title: 'イギリスボクシングの歴史：フューリー・ジョシュアが生まれた土壌', tag: '海外ボクシング' },
+    { title: 'アメリカボクシングの黄金時代：アリ・フレージャー・フォアマンの時代', tag: '海外ボクシング' },
+  ],
+  'トレーニング': [
+    { title: 'ボクシングが最強の有酸素運動である理由：カロリー消費と体への効果', tag: 'トレーニング' },
+    { title: 'ボクシングジムに初めて行く前に知っておきたいこと', tag: 'トレーニング' },
+    { title: 'ボクシンググローブの選び方：初心者に最適なサイズと素材', tag: 'トレーニング' },
+    { title: 'サンドバッグの選び方と自宅トレーニングの始め方', tag: 'トレーニング' },
+    { title: 'ボクシングで痩せる！ダイエット効果と正しいトレーニング方法', tag: 'トレーニング' },
+  ],
+}
+
+// カテゴリローテーション順
+const CATEGORY_ROTATION = [
+  '選手分析',
+  '歴代名試合',
+  '初心者向け',
+  '歴代王者特集',
+  '高校・アマチュア',
+  '観戦ガイド',
+  '海外ボクシング',
+  'トレーニング',
 ]
 
 // タグ→関連ページのマッピング
@@ -112,6 +116,7 @@ const TAG_LINKS = {
   '観戦ガイド': 'ボクシングの観戦方法は[こちら](/watch)で詳しく解説しています。',
   '初心者向け': 'ボクシング初心者ガイドは[こちら](/beginners)もご参照ください。',
   'YouTube・動画': 'DAZNでの視聴方法は[こちら](/watch)をご覧ください。',
+  '選手分析': '注目選手の詳細プロフィールは[こちら](/fighters)をご覧ください。',
 }
 
 // タグ→YouTubeキーワードのマッピング
@@ -123,6 +128,20 @@ const YOUTUBE_KEYWORDS = {
   '高校・アマチュア': '高校ボクシング 試合',
   'YouTube・動画': 'ボクシング YouTube おすすめ',
   '日本ボクシング': '日本ボクシング 名試合',
+  '観戦ガイド': 'ボクシング 試合 観戦',
+  '海外ボクシング': 'world boxing highlights',
+  'トレーニング': 'ボクシング トレーニング 初心者',
+  '初心者向け': 'ボクシング ルール 解説',
+}
+
+// 今日の日付から優先カテゴリを決定（ローテーション）
+function getPriorityCategories() {
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000)
+  const categories = []
+  for (let i = 0; i < 3; i++) {
+    categories.push(CATEGORY_ROTATION[(dayOfYear + i) % CATEGORY_ROTATION.length])
+  }
+  return categories
 }
 
 async function generateArticle(topic) {
@@ -172,15 +191,55 @@ ${relatedLink ? `## 関連ページ\n\n${relatedLink}` : ''}
   return response.content[0].text
 }
 
+// 最新試合情報を生成・更新
+async function updateLatestMatches() {
+  const prompt = `ボクシングの最新・注目試合情報を5件、JSON配列で出力してください。
+
+2023年〜2025年の実際に行われた重要な世界タイトルマッチを選んでください。
+井上尚弥・ウシク・カネロ・ベテルビエフ・クロフォードなど現役トップ選手の試合を含めてください。
+
+必ず以下のJSON形式のみを出力してください（コードブロック不要）：
+
+[
+  {
+    "date": "YYYY-MM-DD",
+    "fighter1": "選手名1",
+    "fighter2": "選手名2",
+    "result": "勝者 結果の概要",
+    "belt": "タイトル名",
+    "note": "試合の見どころ・ポイント（50文字以内）"
+  }
+]
+
+注意：JSONのみ出力。説明文不要。`
+
+  try {
+    const response = await client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 800,
+      messages: [{ role: 'user', content: prompt }],
+    })
+
+    const text = response.content[0].text.trim()
+    // JSON部分を抽出
+    const jsonMatch = text.match(/\[[\s\S]*\]/)
+    if (jsonMatch) {
+      const matches = JSON.parse(jsonMatch[0])
+      fs.writeFileSync(MATCHES_FILE, JSON.stringify(matches, null, 2), 'utf8')
+      console.log('✅ 最新試合情報を更新しました')
+    }
+  } catch (err) {
+    console.error('❌ 試合情報更新エラー:', err.message)
+  }
+}
+
 function slugify(title) {
-  // タイトルのハッシュ値からASCIIスラグを生成（日本語ファイル名を避ける）
   let hash = 0
   for (let i = 0; i < title.length; i++) {
     hash = ((hash << 5) - hash) + title.charCodeAt(i)
     hash |= 0
   }
   const num = Math.abs(hash).toString(36).substring(0, 8)
-  // 英字部分があれば先頭に付ける
   const ascii = title.match(/[a-zA-Z0-9]+/g)?.join('-').toLowerCase().substring(0, 20) || ''
   return ascii ? `${ascii}-${num}` : `post-${num}`
 }
@@ -190,35 +249,62 @@ async function main() {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true })
   }
 
-  // ランダムに1〜2記事選択
   const existing = fs.readdirSync(OUTPUT_DIR).map(f => f.replace('.md', ''))
-  const available = TOPICS.filter(t => {
-    const slug = slugify(t.title)
-    return !existing.some(e => e.includes(slug.substring(0, 20)))
-  })
 
-  if (available.length === 0) {
-    console.log('全記事生成済みです')
-    return
-  }
+  // 今日の優先カテゴリを取得（ローテーション）
+  const priorityCategories = getPriorityCategories()
+  console.log(`📅 今日の優先カテゴリ: ${priorityCategories.join(' / ')}`)
 
-  const count = Math.min(2, available.length)
-  const selected = available.sort(() => Math.random() - 0.5).slice(0, count)
-
-  for (const topic of selected) {
-    try {
-      console.log(`生成中: ${topic.title}`)
-      const content = await generateArticle(topic)
-      const slug = slugify(topic.title)
-      const date = new Date().toISOString().split('T')[0]
-      const filename = `${date}-${slug}.md`
-      fs.writeFileSync(path.join(OUTPUT_DIR, filename), content, 'utf8')
-      console.log(`✅ 保存: ${filename}`)
-      await new Promise(r => setTimeout(r, 2000))
-    } catch (err) {
-      console.error(`❌ エラー: ${topic.title}`, err.message)
+  // 各カテゴリから1記事ずつ選択（合計3記事）
+  const selected = []
+  for (const category of priorityCategories) {
+    const topics = TOPICS_BY_CATEGORY[category] || []
+    const available = topics.filter(t => {
+      const slug = slugify(t.title)
+      return !existing.some(e => e.includes(slug.substring(0, 20)))
+    })
+    if (available.length > 0) {
+      const pick = available[Math.floor(Math.random() * available.length)]
+      selected.push(pick)
     }
   }
+
+  // 選択が3記事未満の場合は他カテゴリから補充
+  if (selected.length < 3) {
+    const allTopics = Object.values(TOPICS_BY_CATEGORY).flat()
+    const remaining = allTopics.filter(t => {
+      const slug = slugify(t.title)
+      const alreadySelected = selected.some(s => s.title === t.title)
+      const alreadyExist = existing.some(e => e.includes(slug.substring(0, 20)))
+      return !alreadySelected && !alreadyExist
+    })
+    const extra = remaining.sort(() => Math.random() - 0.5).slice(0, 3 - selected.length)
+    selected.push(...extra)
+  }
+
+  if (selected.length === 0) {
+    console.log('全記事生成済みです')
+  } else {
+    // 記事生成
+    for (const topic of selected) {
+      try {
+        console.log(`生成中: ${topic.title}`)
+        const content = await generateArticle(topic)
+        const slug = slugify(topic.title)
+        const date = new Date().toISOString().split('T')[0]
+        const filename = `${date}-${slug}.md`
+        fs.writeFileSync(path.join(OUTPUT_DIR, filename), content, 'utf8')
+        console.log(`✅ 保存: ${filename}`)
+        await new Promise(r => setTimeout(r, 2000))
+      } catch (err) {
+        console.error(`❌ エラー: ${topic.title}`, err.message)
+      }
+    }
+  }
+
+  // 最新試合情報を更新
+  console.log('📊 最新試合情報を更新中...')
+  await updateLatestMatches()
 }
 
 main()

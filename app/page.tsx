@@ -1,10 +1,32 @@
 import Link from "next/link";
+import fs from "fs";
+import path from "path";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FighterImage from "@/components/FighterImage";
 import fighters, { featuredFighters } from "./fighters/data";
 
+type MatchResult = {
+  date: string;
+  fighter1: string;
+  fighter2: string;
+  result: string;
+  belt: string;
+  note: string;
+};
+
+function getLatestMatches(): MatchResult[] {
+  try {
+    const filePath = path.join(process.cwd(), "content/latest-matches.json");
+    const raw = fs.readFileSync(filePath, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
 export default function Home() {
+  const latestMatches = getLatestMatches();
   return (
     <>
       <Header />
@@ -34,6 +56,38 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* 最新試合情報 */}
+        {latestMatches.length > 0 && (
+          <section className="py-10 px-4 bg-gray-900 text-white">
+            <div className="max-w-6xl mx-auto">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-black">🔴 最新・注目試合結果</h2>
+                <Link href="/matches" className="text-red-400 text-sm font-medium hover:underline">
+                  名試合一覧 →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {latestMatches.slice(0, 6).map((m, i) => (
+                  <div key={i} className="bg-gray-800 rounded-xl p-4 hover:bg-gray-700 transition-colors">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-gray-400">{m.date}</span>
+                      {i === 0 && (
+                        <span className="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">最新</span>
+                      )}
+                    </div>
+                    <p className="font-black text-sm mb-1">
+                      {m.fighter1} <span className="text-gray-400">vs</span> {m.fighter2}
+                    </p>
+                    <p className="text-red-400 text-xs font-bold mb-1">{m.result}</p>
+                    <p className="text-gray-400 text-xs mb-2">{m.belt}</p>
+                    <p className="text-gray-300 text-xs">{m.note}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* 注目選手 */}
         <section className="py-12 px-4 bg-white">
